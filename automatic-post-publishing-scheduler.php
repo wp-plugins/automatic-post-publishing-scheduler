@@ -3,7 +3,7 @@
 Plugin Name: Automatic Post Publishing Scheduler
 Plugin URI: http://www.willthewebmechanic.com
 Description: Publishes posts according to a pre-defined schedule.  See 'Settings/Scheduler' on your WordPress dashboard.  The free version of this plugin allows a maximum of three defined time slots.  For unlimited time slots and to unlock premium features, please contact <a href="http://www.willthewebmechanic.com">Will the Web Mechanic</a>.
-Version: 1.0
+Version: 1.1
 Author: Will Brubaker
 Author URI: http://www.willthewebmechanic.com
 License: GPLv3
@@ -33,7 +33,7 @@ class Publish_Scheduler
 {
  static private $wwm_plugin_values = array(
                                         'name' => 'PublishScheduler',
-                                        'version' => '1.0', //hate using a string value here, but need it to hold non-numeric values
+                                        'version' => '1.1', //hate using a string value here, but need it to hold non-numeric values
                                         'slug' => 'PublishScheduler',
                                         'dbversion' => '1.5',
                                         'supplementary' => array(//a place to put things in the future..
