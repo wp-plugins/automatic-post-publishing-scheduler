@@ -2,7 +2,7 @@
 Contributors: willthewebmechanic
 Tags: posts, scheduling, multi-author, auto schedule
 Requires at least: 3.6
-Tested up to: 3.7.1
+Tested up to: 3.8
 Stable tag: 1.1
 License: GPLv3
 
