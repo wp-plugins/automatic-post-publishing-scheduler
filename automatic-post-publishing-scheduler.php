@@ -32,13 +32,13 @@ License: GPLv3
 class Publish_Scheduler
 {
  static private $wwm_plugin_values = array(
-                                        'name' => 'PublishScheduler',
-                                        'version' => '1.1', //hate using a string value here, but need it to hold non-numeric values
-                                        'slug' => 'PublishScheduler',
-                                        'dbversion' => '1.5',
-                                        'supplementary' => array(//a place to put things in the future..
-                                         )
-                                        );
+  'name' => 'PublishScheduler',
+  'version' => '1.1', //hate using a string value here, but need it to hold non-numeric values
+  'slug' => 'PublishScheduler',
+  'dbversion' => '1.5',
+  'supplementary' => array(//a place to put things in the future..
+   )
+  );
  /**
   * runs every time and adds the necessary action and filter hooks among other things that need to happen every time.
   */
@@ -162,7 +162,7 @@ class Publish_Scheduler
       <p>
       <div class="updated">
        <p>
-        <h4>The maximum number of slots allowed in the free version of this plugin is 3.  For unlimited slots and other premium features, please upgrade to the premium version of this plugin. <a href="http://www.willthwebmechanic.com">Will the Web Mechanic</a></h4>
+        <h4>The maximum number of slots allowed in the free version of this plugin is 3.  For unlimited slots and other premium features, please upgrade to the premium version of this plugin. <a href="http://www.willthewebmechanic.com">Will the Web Mechanic</a></h4>
         <ol>Premium features include:
          <li>Unlimited number of defined time slots</li>
          <li>Schedule override via a 'Publish Now' link on the posts page</li>
@@ -419,16 +419,15 @@ class Publish_Scheduler
   //in the 'mn' and 'ampm' arrays, building a new array of timestamps provided that 'mn' is also valid.
   $i = 0;
   foreach ( $hours as $hour) {
-          if ( is_numeric( $hour ) ) {
-              if ( (int) $hour > -1 && (int) $hour < 13 ) {
-                  if ( is_numeric( $_POST['mn'][$i] ) && (int) $_POST['mn'][$i] > -1 && (int) $_POST['mn'][$i] < 61 ) {
-                      $timestamps[] = strtotime( $hour . ':' .  $_POST['mn'][$i] . $_POST['ampm'][$i] );
-                  }
-
-              }
-          }
-      $i++;
-      }
+   if ( is_numeric( $hour ) ) {
+    if ( (int) $hour > -1 && (int) $hour < 13 ) {
+     if ( is_numeric( $_POST['mn'][$i] ) && (int) $_POST['mn'][$i] > -1 && (int) $_POST['mn'][$i] < 61 ) {
+         $timestamps[] = strtotime( $hour . ':' .  $_POST['mn'][$i] . $_POST['ampm'][$i] );
+     }
+    }
+   }
+   $i++;
+  }
   //the new array contains only *nix style timestamps, order it ascending
   asort( $timestamps );
 
@@ -453,9 +452,11 @@ class Publish_Scheduler
  public function plugin_manage_link( $actions, $plugin_file, $plugin_data, $context)
  {
 
-  return array_merge( array(
-                     'Hire Me' => '<a href="http://www.willthewebmechanic.com">Hire Me</a>' ),
-                     $actions );
+  return array_merge(
+   array(
+    'Hire Me' => '<a href="http://www.willthewebmechanic.com">Hire Me</a>' ),
+   $actions
+   );
  }
 }
 $var = new Publish_Scheduler;

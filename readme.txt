@@ -3,7 +3,7 @@ Contributors: willthewebmechanic
 Tags: posts, scheduling, multi-author, auto schedule
 Requires at least: 3.6
 Tested up to: 3.8
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv3
 
 Publishes posts according to a pre-defined schedule.
@@ -31,6 +31,8 @@ From your WordPress dashboard, navigate to Settings/Scheduler.
 2. The link for the settings/configuration panel
 
 == Changelog ==
+= v1.2 =
+1. Just fixing a typo. Thanks Joseph the random passer-by.
 = v1.1 =
 1. Now with actual php file goodness.
 = v1.0 =
