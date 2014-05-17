@@ -1,1 +1,127 @@
-jQuery(document).ready(function(b){var a=b(".hour_input").length;b("#time_slots").val(a);b("#existing_count").val(a);b("#set_time_slots").on("submit",function(h){h.preventDefault();var d=b(".hour_input").length;var f=d;var c=Math.min(b('[name="time_slots"]').val(),3);var g=c;if(g<=0){alert("Number of slots must be greater than zero");return false}if(g==f){}else{if(g>f){for(i=f;i<g;i++){f=i;b("#new_time_slots").append('<div class="slot_input"><span class="label"><label for="hh['+i+']">slot '+(i+1)+' : </label></span><input type="text" class="hour_input" id="hh['+i+']" value="" name="hh['+i+']" size="2" maxlength="2" autocomplete="off"> : <input type="text" id="mn['+i+']" class="mn_input" value="" name="mn['+i+']" size="2" maxlength="2" autocomplete="off"> <select name="ampm['+i+']" class="ampm_sel"><option value="am">am</option><option value="pm">pm</option></select><br /></div>')}}else{for(i=f;i>g;i--){b(".slot_input:last").remove();f=i}}}});b("#assign_time_slots").on("submit",function(c){c.preventDefault();b.post(ajaxurl,b(this).serializeArray(),function(g){var f=0;var d=b(".hour_input").length;var e=d;var h=b(g).length;b(g).each(function(){hh=b(this)[0];mn=b(this)[1];ampm=b(this)[2];b('[name="hh['+f+']"]').val(hh);b('[name="mn['+f+']"]').val(mn);b('[name="ampm['+f+']"]').val(ampm);f++});b("#time_slots").val(h);if(h<e){for(f=e;f>h;f--){b(".slot_input:last").remove();e=f}}},"json")});b(".datepicker").datepicker({onClose:function(c){b(this).attr("value",c)},altField:b(this).prev()});b(".remove").on("change",function(){b(this).parent().remove()});b("#excluded-dates").on("submit",function(c){c.preventDefault();b("#overlay").show();b.post(ajaxurl,b(this).serializeArray(),function(d){if(d.error){alert(d.error);b("#overlay").hide()}else{location.reload(true)}},"json")});b("#excluded-days").on("submit",function(c){c.preventDefault();b("#overlay").show();b.post(ajaxurl,b(this).serializeArray(),function(d){if(d.error){alert(d.error);b("#overlay").hide()}else{location.reload(true)}},"json")})});
+jQuery(document).ready(function($) {
+  var timeSlotCount = $('.hour_input').length;
+
+  $('#time_slots').val(timeSlotCount);
+  $('#existing_count').val(timeSlotCount);
+
+  $('#set_time_slots').on('submit', function(e) {
+    e.preventDefault();
+    var timeSlotCount = $('.hour_input').length;
+    var existingCount = timeSlotCount;
+    var slotsAskedFor = $('[name="time_slots"]').val();
+    if (slotsAskedFor == existingCount) {
+      //nothing to do here
+    } else if (slotsAskedFor > existingCount) {
+
+      for (i = existingCount; i < slotsAskedFor; i++) {
+        existingCount = i;
+
+        $('#new_time_slots').append('<div class="slot_input"><span class="label"><label for="hh[' + i + ']">slot ' + (i + 1) + ' : </label></span><input type="text" class="hour_input" id="hh[' + i + ']" value="" name="hh[' + i + ']" size="2" maxlength="2" autocomplete="off"> : <input type="text" id="mn[' + i + ']" class="mn_input" value="" name="mn[' + i + ']" size="2" maxlength="2" autocomplete="off"> <select name="ampm[' + i + ']" class="ampm_sel"><option value="am">am</option><option value="pm">pm</option></select><br /></div>');
+      }
+
+    } else {
+      for (i = existingCount; i > slotsAskedFor; i--) {
+        $('.slot_input:last').remove();
+        existingCount = i;
+      }
+
+    }
+  });
+
+  $('#assign_time_slots').on('submit', function(e) {
+    e.preventDefault();
+
+    $.post(ajaxurl, $(this).serializeArray(), function(data) {
+      var i = 0;
+      var timeSlotCount = $('.hour_input').length;
+      var existingCount = timeSlotCount;
+      var slotsAskedFor = $(data).length;
+
+      $(data).each(function() {
+        hh = $(this)[0];
+        mn = $(this)[1];
+        ampm = $(this)[2];
+        $('[name="hh[' + i + ']"]').val(hh);
+        $('[name="mn[' + i + ']"]').val(mn);
+        $('[name="ampm[' + i + ']"]').val(ampm);
+        i++;
+      });
+
+      $('#time_slots').val(slotsAskedFor);
+      if (slotsAskedFor < existingCount) {
+        for (i = existingCount; i > slotsAskedFor; i--) {
+          $('.slot_input:last').remove();
+          existingCount = i;
+        }
+      }
+
+    }, 'json');
+  });
+
+  $('.datepicker').datepicker({
+    onClose: function(date) {
+      $(this).attr('value', date);
+    },
+    altField: $(this).prev()
+  });
+
+  $('#excluded-dates').on('submit', function(e) {
+    e.preventDefault();
+    var overlay = $('.overlay', $(this));
+    overlay.show();
+    $.post(ajaxurl, $(this).serializeArray(), function(data) {
+      if (data.error) {
+        alert(data.error);
+        overlay.hide();
+      } else {
+        location.reload(true);
+      }
+    }, 'json');
+  });
+
+  $('#excluded-days').on('submit', function(e) {
+    e.preventDefault();
+    var overlay = $('.overlay', $(this));
+    overlay.show();
+
+    $.post(ajaxurl, $(this).serializeArray(), function(data) {
+      if (data.error) {
+        alert(data.error);
+        overlay.hide();
+      } else {
+        location.reload(true);
+      }
+    }, 'json');
+  });
+
+  $('.defined-dates').on('change', 'input.remove', function() {
+    $(this).parent().remove();
+  });
+
+  $('#excluded-dates').on('change', 'input.allow', function() {
+    var counter;
+    if (true == $(this).prop('checked')) {
+      counter = (function() {
+        i = 0;
+        $('#excluded-dates input[name^="dates_allowed"]').each(function() {
+          $(this).attr('name', 'dates_allowed[' + i + ']');
+          i++;
+        });
+        return i;
+      })();
+      newName = 'dates_allowed[' + counter + ']';
+      $(this).prev().attr('name', newName);
+    } else {
+      counter = (function() {
+        i = 0;
+        $('#excluded-dates input[name^="dates_denied"]').each(function() {
+          $(this).attr('name', 'dates_denied[' + i + ']');
+          i++;
+        });
+        return i;
+      })();
+      newName = 'dates_denied[' + counter + ']';
+      $(this).prev().attr('name', newName);
+    }
+  });
+});
