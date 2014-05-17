@@ -51,7 +51,7 @@ This plugin allows you to gain very precise control over when posts are publishe
 * If you would like to see more features, [let me know](http://wordpress.org/support/plugin/automatic-post-publishing-scheduler "Feature Request").
 * Can you provide artwork for the banner or other assets? Please do - I'll put your name in pixels and will be forever grateful.
 * Are you a developer and would like to contribute code to this plugin? Find me on [github](https://github.com/WillBrubaker/automatic-post-publishing-scheduler "Fork Me") and send a pull request (which will also result in your name in pixels).
-* [Tweet](http://ctt.ec/p4e0r "Shout it from the rooftops") about this plugin, write about it on your blog.
+* [Tweet](http://ctt.ec/BIYrv "Shout it From the Rooftops") about this plugin, write about it on your blog.
 * Any of the above actions are truly and greatly appreciated!
 
 

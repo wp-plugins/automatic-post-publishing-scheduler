@@ -783,6 +783,7 @@ class Publish_Scheduler
           <li><a href="https://github.com/WillBrubaker/automatic-post-publishing-scheduler" title="Form Me">Automatic Post Publishing Scheduler on github</a></li>
           <li><a href="http://wordpress.org/support/plugin/automatic-post-publishing-scheduler" title="Get Support">Support for Automatic Post Publishing Scheduler</a></li>
           <li><a href="http://wordpress.org/support/view/plugin-reviews/automatic-post-publishing-scheduler" title="Review The Automatic Post Publishing Scheduler Plugin">Rate Automatic Post Publishing Scheduler</a></li>
+          <li><a href="http://ctt.ec/BIYrv" title="Shout it From the Rooftops!">Tweet this plugin</a></li>
           <li>Donate to the development of the Automatic Post Publishing Scheduler plugin
            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
             <input name="cmd" type="hidden" value="_s-xclick" />
