@@ -3,10 +3,12 @@
 Plugin Name: Publish Scheduler
 Plugin URI: http://www.willthewebmechanic.com
 Description: Replaces default publishing with queued publishing.
-Version: 2.0
+Version: 2.0.1
 Author: Will Brubaker
 Author URI: http://www.willthewebmechanic.com
 License: GPL 3.0+
+Text Domain: automatic-post-publishing-scheduler
+Domain Path: /languages/
 */
 
 /**
@@ -32,15 +34,14 @@ class Publish_Scheduler
 
  static private $wwm_plugin_values = array(
   'name' => 'PublishScheduler',
-  'version' => '2.0',
+  'version' => '2.0.1',
   'slug' => 'PublishScheduler',
   'dbversion' => '1.5',//db version 1.1 was introduced in version 2.0, 1.2 in 2.1, 1.3 in 2.2, 1.4 in 2.3
   'supplementary' => array(
-   'update_url'  => 'http://www.vagabumming.com/custom_plugins/update_scheduler.php',
    ),
   );
 
- public $wwm_page_link;
+public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $text_domain;
 
  /**
   * Runs every time this plugin is loaded. The bulk of the action/filter hooks go here.
@@ -62,6 +63,12 @@ class Publish_Scheduler
    add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_manage_link' ), 10, 4 );
    add_action( 'after_wwm_plugin_links', array( &$this, 'output_links' ) );
   }
+
+  $this->text_domain = 'automatic-post-publishing-scheduler';
+  $this->page_title = __( 'Publishing Scheduler Options', $this->text_domain );
+  $this->menu_title = __( 'Scheduler', $this->text_domain );
+  $this->menu_slug = 'PublishSchedule.php';
+  $this->menu_link_text = __( 'Scheduler', $this->text_domain );
  }
 
  /**
@@ -102,9 +109,9 @@ class Publish_Scheduler
  {
 
   wp_enqueue_script( 'publish-now-ajax', plugins_url( 'js/publishnow.js', __FILE__ ), array( 'jquery', 'jquery-ui-dialog' ), self::$wwm_plugin_values['version'], true );
-  wp_enqueue_style( 'jquery-ui-lightness', plugins_url( 'css/jquery-ui.min.css', __FILE__ ), array(), self::$wwm_plugin_values['version'] );      wp_enqueue_style( 'jquery-ui-dialog-min' );
+  wp_enqueue_style( 'jquery-ui-lightness', plugins_url( 'css/jquery-ui.min.css', __FILE__ ), array(), self::$wwm_plugin_values['version'] );
   if ( strpos( $_SERVER['REQUEST_URI'], 'page=PublishSchedule.php' ) ) {
-   wp_enqueue_script( 'scheduler-options-js', plugins_url( 'js/scheduleroptions.js', __FILE__ ), array( 'jquery', 'jquery-ui-datepicker' ), self::$wwm_plugin_values['version'], true );
+   wp_enqueue_script( 'scheduler-options-js', plugins_url( 'js/scheduleroptions.js', __FILE__ ), array( 'jquery', 'jquery-ui-datepicker', 'jquery-ui-tabs' ), self::$wwm_plugin_values['version'], true );
    wp_enqueue_style( 'scheduler-stylesheet', plugins_url( 'css/scheduler.css', __FILE__ ), null , self::$wwm_plugin_values['version'] );
   }
  }
@@ -130,7 +137,7 @@ class Publish_Scheduler
    $_wwm_plugins_page[0] = add_menu_page( 'WtWM Plugins', 'WtWM Plugins', 'manage_options', 'wwm_plugins', array( &$this, 'wwm_plugin_links' ), plugins_url( 'images/wwm_wp_menu.png', __FILE__ ), '60.9' );
    $_wwm_plugins_page[1] = $plugin_panel_version;
   }
-  add_submenu_page( 'wwm_plugins', 'Scheduler Options', 'Scheduler', 'manage_options', 'PublishSchedule.php', array( &$this, 'scheduler_options' ) );
+  add_submenu_page( 'wwm_plugins', $this->page_title, $this->menu_title, 'manage_options', $this->menu_slug, array( &$this, 'scheduler_options' ) );
  }
 
  /**
@@ -153,26 +160,32 @@ class Publish_Scheduler
 
   <div class="wrap">
    <p>
-    <ul>Donate to the future development of this plugin:
-     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-      <input name="cmd" type="hidden" value="_s-xclick" />
-      <input name="hosted_button_id" type="hidden" value="634DZTUWQA2ZU" />
-      <input alt="PayPal - The safer, easier way to pay online!" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" type="image" />
-      <img src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" alt="Donate" width="1" height="1" border="0" />
-     </form>
+    <ul><?php _e( 'Donate to the future development of this plugin:', $this->text_domain ); ?>
+     <li>
+      <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+       <input name="cmd" type="hidden" value="_s-xclick" />
+       <input name="hosted_button_id" type="hidden" value="634DZTUWQA2ZU" />
+       <input alt="PayPal - The safer, easier way to pay online!" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" type="image" />
+       <img src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" alt="Donate" width="1" height="1" border="0" />
+      </form>
+     </li>
+     <li>
+      <a class="coinbase-button" data-code="39735a28948aab41c695a3550c2c93d4" data-button-style="donation_large" href="https://coinbase.com/checkouts/39735a28948aab41c695a3550c2c93d4">Donate Bitcoins</a><script src="https://coinbase.com/assets/button.js" type="text/javascript"></script>
+     </li>
+
     </ul>
    </p>
-   <div id="overlay"><span class="preloader"></span></div>
-   <h2>Set Scheduler Options:</h2>
+   <h2><?php _e( 'Set Scheduler Options:', $this->text_domain ); ?></h2>
    <div class="updated">
     <p>
-    Input the number of time slots required.  If the number entered is less than the existing number, slots will be removed from the bottom up.  Changes will not be saved until committed using the 'Assign time slots' form below.
+    <?php _e( 'Input the number of time slots required.  If the number entered is less than the existing number, slots will be removed from the bottom up.  Changes will not be saved until committed using the \'Assign time slots\' form below.', $this->text_domain ); ?>
     </p>
    </div>
    <form id="set_time_slots" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+    <div class="overlay"><span class="preloader"></span></div>
     <input type="hidden" name="action" value="set_time_slots">
     <input id="existing_count" type="hidden" name="existing_count" value="">
-    <label for="time_slots">Number of time slots required:<br>
+    <label for="time_slots"><?php _e( 'Number of time slots required:', $this->text_domain ); ?><br>
      <input id="time_slots" type="number" name="time_slots" size="3" maxlength="3">
     </label>
     <br><br>
@@ -181,11 +194,12 @@ class Publish_Scheduler
    <hr>
    <div class="updated">
    <p>
-   Use the form below to put times into your time slots.  Duplicates are allowed. Invalid values will be discarded.  Ordering will also be done during processing.  Changes will not take effect until the 'submit' button is pressed.
+   <?php _e( 'Use the form below to put times into your time slots.  Duplicates are allowed. Invalid values will be discarded.  Ordering will also be done during processing.  Changes will not take effect until the \'submit\' button is pressed.', $this->text_domain ); ?>
    </p>
    </div>
-   <h4>Assign time slots:</h4><br>
+   <h4><?php _e( 'Assign time slots:', $this->text_domain ); ?></h4><br>
    <form id="assign_time_slots" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+    <div class="overlay"><span class="preloader"></span></div>
     <input type="hidden" name="action" value="assign_time_slots">
     <?php
     //$html comes from extract( $variable_html )
@@ -197,8 +211,8 @@ class Publish_Scheduler
     <input type="submit" class="button button-primary" value="submit">
    </form>
    <hr>
-   <h3>Enable days of the week in your publishing schedule.</h3>
-   <div class="updated"><p>Weekdays that are checked are enabled by your publishing schedule.  This can be overridden by specific date in the next section.</p></div>
+   <h3><?php _e( 'Enable days of the week in your publishing schedule.', $this->text_domain ); ?></h3>
+   <div class="updated"><p><?php _e( 'Weekdays that are checked are enabled by your publishing schedule.  This can be overridden by specific date in the next section.', $this->text_domain ); ?></p></div>
     <form id="excluded-days" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
      <div class="overlay"><span class="preloader"></span></div>
      <fieldset id="week-days" name="week-days">
@@ -206,8 +220,7 @@ class Publish_Scheduler
      $dow = array( 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' );
 
      foreach ( $dow as $i => $day ) {
-      $check_prop = ( in_array( $i, $enabled_days ) ? ' checked="checked" ' : null );
-      echo '<label for="' . $day . '">' . $day . '<br /><input id="' . $day . '" type="checkbox" name="weekday[' . $i . ']" value="' . $i . '"' . $check_prop . ' /></label>' . "\n";
+      echo '<label for="' . $day . '">' . $day . '<br /><input id="' . $day . '" type="checkbox" name="weekday[' . $i . ']" value="' . $i . '"' . checked( in_array( $i, $enabled_days ), true, false ) . ' /></label>' . "\n";
      }
      ?>
      </fieldset>
@@ -216,10 +229,10 @@ class Publish_Scheduler
      <input type="hidden" name="action" value="update_enabled_days">
     </form>
     <hr>
-    <h3>Define dates to exclude or allow in your publishing schedule</h3>
+    <h3><?php _e( 'Define dates to exclude or allow in your publishing schedule', $this->text_domain ); ?></h3>
     <div class="updated">
      <p>
-      Dates entered below will be excluded from your publishing schedule (for holidays, etc) unless the 'Check to allow' box is checked.  In that case publishing will be allowed on that specific date (overrides disabled days of the week from the section above).
+      <?php _e( 'Dates entered below will be excluded from your publishing schedule (for holidays, etc) unless the \'Check to allow\' box is checked.  In that case publishing will be allowed on that specific date (overrides disabled days of the week from the section above).', $this->text_domain ); ?>
      </p>
     </div>
 
@@ -549,7 +562,7 @@ class Publish_Scheduler
   } elseif ( isset( $_POST['_inline_edit'] ) && wp_verify_nonce( $_POST['_inline_edit'], 'inlineeditnonce' ) ) {
    return true;
   } else {
-   $nonce_actions = array( 'press-this', 'add-post', );
+   $nonce_actions = array( 'press-this', 'add-post', 'media-form', );
    if ( isset( $_POST['post_ID'] ) ) {
     $nonce_actions[] = 'update-post_' . $_POST['post_ID'];
    }
@@ -792,6 +805,7 @@ class Publish_Scheduler
             <img src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" alt="Donate" width="1" height="1" border="0" />
            </form>
           </li>
+          <li><a class="coinbase-button" data-code="39735a28948aab41c695a3550c2c93d4" data-button-style="donation_large" href="https://coinbase.com/checkouts/39735a28948aab41c695a3550c2c93d4">Donate Bitcoins</a><script src="https://coinbase.com/assets/button.js" type="text/javascript"></script></li>
          </ul>';
   }
  }
@@ -866,7 +880,7 @@ class Publish_Scheduler
    * duplicated in both arrays, keep the one in the 'denied'
    * array and discard the one in the 'allowed' array.
    */
-  if ( isset( $_POST['dates_allowed'] ) ) {
+  if ( isset( $_POST['dates_allowed'] ) && isset( $_POST['dates_denied'] ) ) {
    foreach ( $_POST['dates_allowed'] as $key => $date ) {
     if ( is_array( $_POST['dates_denied'] ) && in_array( $date, $_POST['dates_denied'] ) ) {
      unset( $_POST['dates_allowed'][$key] );
@@ -874,21 +888,22 @@ class Publish_Scheduler
    }
   }
   $time_slots = get_option( 'publish_scheduler_options', array() );
-  $time_slots['dates_allowed'] = ( ! empty( $_POST['dates_allowed'] ) ) ? $_POST['dates_allowed'] : array() ;
-  $time_slots['dates_denied'] = ( ! empty( $_POST['dates_denied'] ) ) ? $_POST['dates_denied'] : array() ;
+  $time_slots['dates_allowed'] = ( ! empty( $_POST['dates_allowed'] ) ) ? $_POST['dates_allowed'] : array();
+  $time_slots['dates_denied'] = ( ! empty( $_POST['dates_denied'] ) ) ? $_POST['dates_denied'] : array();
+  $time_slots['dates_denied'] = array_unique( array_merge( $_POST['dates_denied'], $time_slots['dates_denied'] ) );
+  $time_slots['dates_allowed'] = array_unique( array_merge( $_POST['dates_allowed'], $time_slots['dates_allowed'] ) );
 
   foreach ( $time_slots['dates_denied'] as $key => $date ) {
    $now = strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) );
-   if ( ( strtotime( $now ) > strtotime( $date ) ) || strlen( $date ) != 10 ) {
+   if ( ( $now > strtotime( $date ) ) || strlen( $date ) != 10 ) {
     unset( $time_slots['dates_denied'][$key] );
    } else {
     $time_slots['dates_denied'][$key] = sanitize_text_field( $date );
    }
   }
-
   foreach ( $time_slots['dates_allowed'] as $key => $date ) {
    $now = strtotime( date_i18n( 'Y-m-d', current_time( 'timestamp' ) ) );
-    if ( ( strtotime( $now ) > strtotime( $date ) ) || strlen( $date ) != 10 ) {
+    if ( ( $now > strtotime( $date ) ) || strlen( $date ) != 10 ) {
      unset( $key );
     } else {
      $time_slots['dates_allowed'][$key] = sanitize_text_field( $date );

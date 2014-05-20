@@ -1,19 +1,20 @@
-=== Automatic Post Publishing Scheduler ===
-Contributors: WilltheWebMechanic
-License: GPLv3.0+
-Requires at least: 3.6
-Tested up to: 3.9.1
-Stable tag: 2.0.1
-Tags: posts, publishing, scheduling, admin, author, automatic, blog, free, plugin
-Donate Link: http://www.willthewebmechanic.com/automatic-post-publishing-scheduler/
+# Automatic Post Publishing Scheduler #
+![banner](assets/banner-772x250.png)
+**Contributors:** WilltheWebMechanic
+**License:** GPLv3.0+
+**Requires at least:** 3.6
+**Tested up to:** 3.9.1
+**Stable tag:** 2.0.1
+**Tags:** posts, publishing, scheduling, admin, author, automatic, blog, free, plugin
+**Donate Link:** http://www.willthewebmechanic.com/automatic-post-publishing-scheduler/
 
 Schedule posts LIKE A BOSS!! Define time slots for publishing and forget about it.
 
-== Description ==
+## Description ##
 
 This plugin allows you to gain very precise control over when posts are published to your site.
 
-= Features =
+### Features ###
 
 1. Allows the creation of any number of time slots for post publishing
 2. Admin users are able to allow or disallow publishing on any given day(s) of the week through a simple interface
@@ -22,9 +23,9 @@ This plugin allows you to gain very precise control over when posts are publishe
 5. Any admin/editor user can alter the scheduled date by using the quick-edit screen.
 6. Normal users (authors, etc) can alter the scheduled time/date of their posts, but the defined time slots will still be respected.
 
-== Installation ==
+## Installation ##
 
-= Option 1 =
+### Option 1 ###
 * Within your WordPress admin area, navigate to "Plugins".
 * Click the "Add New" link near the top of your screen.
 * Click the "Upload" link.
@@ -32,22 +33,20 @@ This plugin allows you to gain very precise control over when posts are publishe
 * Click the "Install Now" button
 * Click "Activate Plugin"
 
-= Option 2 =
+### Option 2 ###
 * Extract the zip file
 * Upload (ftp) the resulting `automatic-post-publishing-scheduler` folder to your `/wp-content/plugins/` directory.
 * Activate "Automatic Post Publishing Scheduler" through the "Plugins" menu in WordPress
 
-= After Installation: =
+### After Installation: ###
 * Once activated, your admin menu will have an item labeld "WtWM Plugins", that item has a submenu item called "Scheduler", this is where you can configure your settings.
 * Rejoice in how amazingly awesome your posts can now be scheduled.
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions ##
 
-= How can I support the development of this plugin? =
+### How can I support the development of this plugin? ###
 
-= The most obvious way is to =
-[donate](http://www.willthewebmechanic.com/automatic-post-publishing-scheduler/ "Support Future Development").
-= However, there are many other ways that you can contribute. =
+### The most obvious way is to [donate](http://www.willthewebmechanic.com/automatic-post-publishing-scheduler/ "Support Future Development"). However, there are many other ways that you can contribute. ###
 * By simply [rating](http://wordpress.org/support/view/plugin-reviews/automatic-post-publishing-scheduler "Review this plugin") this plugin you provide me valuable feedback on what is important to the users of this plugin.
 * If you find a bug, report it in the [support forums](http://wordpress.org/support/plugin/automatic-post-publishing-scheduler "Get Support").
 * If you would like to see more features, [let me know](http://wordpress.org/support/plugin/automatic-post-publishing-scheduler "Feature Request").
@@ -57,48 +56,67 @@ This plugin allows you to gain very precise control over when posts are publishe
 * Any of the above actions are truly and greatly appreciated!
 
 
-== Screenshots ==
+## Screenshots ##
 
-1. The admin menu item that this plugin creates and the links to the plugin settings/configuration.
-2. Time slot configuration - simple!.
-3. Configuration of allowed/disallowed days of the week.
-4. Configuration of explicitly allowed/disallowed dates.
-5. The datepicker implementation.
-6. The 'Publish Now' link - available only to Admin users.
-7. The "Quick Edit" interface. Admin users can override scheduled time/date here.
+###1. The admin menu item that this plugin creates and the links to the plugin settings/configuration.###
+![The admin menu item that this plugin creates and the links to the plugin settings/configuration.](screenshot-1.png)
 
-== Changelog ==
+###2. Time slot configuration - simple!.###
+![Time slot configuration - simple!.](screenshot-2.png)
 
-= v2.0.1 =
+###3. Configuration of allowed/disallowed days of the week.###
+![Configuration of allowed/disallowed days of the week.](screenshot-3.png)
+
+###4. Configuration of explicitly allowed/disallowed dates.###
+![Configuration of explicitly allowed/disallowed dates.](screenshot-4.png)
+
+###5. The datepicker implementation.###
+![The datepicker implementation.](screenshot-5.png)
+
+###6. The 'Publish Now' link - available only to Admin users.###
+![The 'Publish Now' link - available only to Admin users.](screenshot-6.png)
+
+###7. The "Quick Edit" interface. Admin users can override scheduled time/date here.###
+![The "Quick Edit" interface. Admin users can override scheduled time/date here.](screenshot-7.png)
+
+
+## Changelog ##
+
+### v2.0.1 ###
 
 1. You spoke, I listened! New feature added. This plugin will now auto-schedule posts that are created with the "Automatic Featured Image Posts" plugin.
-2. Much progress made towards making this plugin translation friendly.
-3. Minor code optimizations.
+2. Much progress made towards making this plugin translation friendly
+3. Minor code optimizations
 4. **Bug Fix** included/excluded dates input should now be working.
-5. CSS & JS improvements.
 
-= v2.0 =
+### v2.0 ###
 * Version 2.0 is a major re-do of this plugin, inspired by my recent attendace of WordCamp Miami. Huge shouts to all the people there who inspired me and inspired the re-write of this plugin.
 
 1. Premium features are now **FREE!!**
 
-= v1.3 =
+### v1.3 ###
+
 1. minor changes and improvements in efficiency
-= v1.2 =
+
+### v1.2 ###
+
 1. Just fixing a typo. Thanks Joseph the random passer-by.
-= v1.1 =
+
+### v1.1 ###
+
 1. Now with actual php file goodness.
-= v1.0 =
+
+### v1.0 ###
+
 1. Initial Public Release
 
-== Additional Information ==
+## Additional Information ##
 
-= Known Issues: =
+### Known Issues: ###
 
-* At this time, even though duplicate time slots are allowed, they are not working. For best results, avoid duplicating time slots.
+*	At this time, even though duplicate time slots are allowed, they are not working. For best results, avoid duplicating time slots.
 
-
-= To Do List =
+### To Do List ###
 * Improvements to UI
 * Code optimization and constant improvement
 * More features
@@ -109,5 +127,5 @@ This plugin allows you to gain very precise control over when posts are publishe
 * User customization of the pop-up message that is displayed when a post is scheduled.
 * **Your feature request here.**
 
-= Credits =
+### Credits ###
 * **Your name could be here** make a contribution today! (see the FAQ for suggestions of how you can help with the development)
