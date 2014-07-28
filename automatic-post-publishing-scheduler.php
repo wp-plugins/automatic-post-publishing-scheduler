@@ -3,7 +3,7 @@
 Plugin Name: Publish Scheduler
 Plugin URI: http://www.willthewebmechanic.com
 Description: Replaces default publishing with queued publishing.
-Version: 2.0.3
+Version: 2.1
 Author: Will Brubaker
 Author URI: http://www.willthewebmechanic.com
 License: GPL 3.0+
@@ -34,7 +34,7 @@ class Publish_Scheduler
 
  static private $wwm_plugin_values = array(
   'name' => 'PublishScheduler',
-  'version' => '2.0.3',
+  'version' => '2.1',
   'slug' => 'PublishScheduler',
   'dbversion' => '1.5',//db version 1.1 was introduced in version 2.0, 1.2 in 2.1, 1.3 in 2.2, 1.4 in 2.3
   'supplementary' => array(
@@ -55,10 +55,12 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
   add_action( 'wp_ajax_publish_now', array( &$this, 'ajax_publish_now' ) );
   add_action( 'wp_ajax_update_excluded_dates', array( &$this, 'update_excluded_dates' ) );
   add_action( 'wp_ajax_update_enabled_days', array( &$this, 'update_enabled_days' ) );
+  add_action( 'wp_ajax_wwm_apps_general_options', array( &$this, 'update_general_options' ) );
   add_filter( 'wp_insert_post_data', array( &$this, 'queue_post' ), 599, 2 );
   add_filter( 'post_row_actions', array( &$this, 'add_publish_now_link' ), 10, 2 );
   add_action( 'admin_enqueue_scripts', array( &$this, 'wwm_enqueue_admin_scripts' ) );
   add_action( 'admin_footer', array( &$this, 'display_scheduled_alert' ) );
+  add_action( 'post_submitbox_misc_actions', array( &$this, 'post_submit_checkbox' ) );
   if ( is_admin() ) {
    add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'plugin_manage_link' ), 10, 4 );
    add_action( 'after_wwm_plugin_links', array( &$this, 'output_links' ) );
@@ -92,7 +94,7 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
       array( '10', '00', 'am' ),
       array( '11', '00', 'am' ),
       array( '12', '00', 'pm' ),
-     )
+     ),
     )
    );
   }
@@ -156,6 +158,8 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
   }
   $variable_html = $this->get_variable_html();
   extract( $variable_html );
+  $general_options = get_option( 'wwm_scheduler_general_options', array() );
+  $show_checkbox = ( isset( $general_options['override'] ) ) ? absint( $general_options['override'] ) : 0;
   ?>
 
   <div class="wrap">
@@ -179,6 +183,7 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
      <li><a href="#slots"><?php _e( 'Configure Time Slots', $this->text_domain ); ?></a></li>
      <li><a href="#weekdays"><?php _e( 'Configure Week Days', $this->text_domain ); ?></a></li>
      <li><a href="#dates"><?php _e( 'Configure Dates', $this->text_domain ); ?></a></li>
+     <li><a href="#general"><?php _e( 'General Plugin Options', $this->text_domain ); ?></a></li>
     </ul>
     <div id="slots">
      <h2><?php _e( 'Set Scheduler Options:', $this->text_domain ); ?></h2>
@@ -225,29 +230,29 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
        <?php _e( 'Weekdays that are checked are enabled by your publishing schedule.  This can be overridden by specific date in the next section.', $this->text_domain ); ?>
       </p>
      </div>
-      <form id="excluded-days" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
-       <div class="overlay"><span class="preloader"></span></div>
-       <fieldset id="week-days" name="week-days">
-       <?php
-       $dow = array( 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' );
+     <form id="excluded-days" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <div class="overlay"><span class="preloader"></span></div>
+      <fieldset id="week-days" name="week-days">
+      <?php
+      $dow = array( 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' );
 
-       foreach ( $dow as $i => $day ) {
-        echo '<label for="' . $day . '">' . $day . '<br /><input id="' . $day . '" type="checkbox" name="weekday[' . $i . ']" value="' . $i . '"' . checked( in_array( $i, $enabled_days ), true, false ) . ' /></label>' . "\n";
-       }
-       ?>
-       </fieldset>
-       <?php wp_nonce_field( 'days-of-week', 'days_of_week', true, true ); ?>
-       <input class="button-primary" type="submit" value="<?php _e( 'Enable Days', $this->text_domain ); ?>">
-       <input type="hidden" name="action" value="update_enabled_days">
-      </form>
-      </div><!--#weekdays-->
-      <div id="dates">
-      <h3><?php _e( 'Define dates to exclude or allow in your publishing schedule', $this->text_domain ); ?></h3>
-      <div>
-       <p>
-        <?php _e( 'Dates entered below will be excluded from your publishing schedule (for holidays, etc) unless the \'Check to allow\' box is checked.  In that case publishing will be allowed on that specific date (overrides disabled days of the week from the section above).', $this->text_domain ); ?>
-       </p>
-      </div>
+      foreach ( $dow as $i => $day ) {
+       echo '<label for="' . $day . '">' . $day . '<br /><input id="' . $day . '" type="checkbox" name="weekday[' . $i . ']" value="' . $i . '"' . checked( in_array( $i, $enabled_days ), true, false ) . ' /></label>' . "\n";
+      }
+      ?>
+      </fieldset>
+      <?php wp_nonce_field( 'days-of-week', 'days_of_week', true, true ); ?>
+      <input class="button-primary" type="submit" value="<?php _e( 'Enable Days', $this->text_domain ); ?>">
+      <input type="hidden" name="action" value="update_enabled_days">
+     </form>
+    </div><!--#weekdays-->
+    <div id="dates">
+     <h3><?php _e( 'Define dates to exclude or allow in your publishing schedule', $this->text_domain ); ?></h3>
+     <div>
+      <p>
+       <?php _e( 'Dates entered below will be excluded from your publishing schedule (for holidays, etc) unless the \'Check to allow\' box is checked.  In that case publishing will be allowed on that specific date (overrides disabled days of the week from the section above).', $this->text_domain ); ?>
+      </p>
+     </div>
 
      <form id="excluded-dates" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <div class="overlay"><span class="preloader"></span></div>
@@ -264,8 +269,18 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
        <input type="submit" value="<?php _e( 'Save the Dates', $this->text_domain ); ?>" class="button-primary">
       </p>
      </form>
-   </div>
-  </div><!--#tabs-->
+    </div><!--#dates-->
+    <div id="general">
+     <h3><?php _e( 'General Plugin Options', $this->text_domain ); ?></h3>
+     <form id="general-options" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
+      <div class="overlay"><span class="preloader"></span></div>
+      <label for="override-checkbox"><input type="checkbox" name="override" id="override-checkbox" <?php checked( $show_checkbox ); echo '>'; _e( 'Allow admins & editors to override automatic scheduling?', $this->text_domain ); ?></label>
+      <?php wp_nonce_field( 'override-schedule', '_nonce', true, true ); ?>
+      <input type="hidden" name="action" value="wwm_apps_general_options">
+      <p><input type="submit" value="Update Options" class="button-primary"></p>
+     </form>
+    </div><!--#general-->
+   </div><!--#tabs-->
   </div>
 
   <?php
@@ -397,7 +412,7 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
    return $data;
   }
 
-  if ( isset( $data['post_status'] ) && 'draft' == $data['post_status'] || 'auto-draft' == $data['post_status'] || isset( $data['post_title'] ) && 'Auto Draft' == $data['post_title'] ) {
+  if ( isset( $data['post_status'] ) && 'draft' == $data['post_status'] || 'auto-draft' == $data['post_status'] || isset( $data['post_title'] ) && 'Auto Draft' == $data['post_title'] || ( isset( $_POST['override_schedule'] ) && 1 == $_POST['override_schedule'] ) ) {
    return $data;
   }
   date_default_timezone_set( 'UTC' );
@@ -786,7 +801,7 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
  public function wwm_plugin_links()
  {
 
-  $wwm_plugin_links = apply_filters( 'wwm_plugin_links', $wwm_plugin_links );
+  $wwm_plugin_links = apply_filters( 'wwm_plugin_links', array() );
   //set a version here so that everything can be overwritten by future plugins.
   //and pass it via the do_action calls
   $plugin_links_version = 1;
@@ -826,6 +841,7 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
          </ul>';
   }
  }
+
  /**
   * Adds a 'publish now' link to the post edit page
   * @since  1.0
@@ -971,6 +987,23 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
  }
 
  /**
+  * AJAX handler for updating general plugin options
+  * @since 2.1
+  */
+ public function update_general_options() {
+  if ( ! wp_verify_nonce( $_POST['_nonce'], 'override-schedule' ) || ! current_user_can( 'manage_options' ) ) {
+   status_header( 403 );
+   exit;
+  }
+
+  $general_options = get_option( 'wwm_scheduler_general_options', array() );
+  $new_value = ( isset( $_POST['override'] ) ) ? 1 : 0;
+  $general_options['override'] = $new_value;
+  $success = update_option( 'wwm_scheduler_general_options', $general_options );
+  wp_send_json_success();
+ }
+
+ /**
   * Injects js to display an alert to the article author
   * explaining why their 'Published' article has been 'Scheduled' instead.
   * @since 1.0
@@ -1008,6 +1041,29 @@ public $wwm_page_link, $page_title, $menu_title, $menu_slug, $menu_link_text, $t
    </script>
   <?php
   }
+ }
+
+ /**
+  * Inserts a checkbox to override the automatic post scheduler for admins/editors
+  * @since 2.0.4
+  */
+ public function post_submit_checkbox()
+ {
+
+  global $post;
+  $general_options = get_option( 'wwm_scheduler_general_options', array() );
+  $show_checkbox = ( isset( $general_options['override'] ) ) ? absint( $general_options['override'] ) : 0;
+  if ( current_user_can( 'edit_others_posts' ) && 'publish' != $post->post_status && $show_checkbox ) {
+
+   ?>
+   <div class="post-scheduling-override misc-pub-section">
+    <label for="schedule-override">
+     <input id="schedule-override" type="checkbox" name="override_schedule" value="1"><?php _e ( 'Override auto-scheduler?', $this->text_domain ); ?>
+    </label>
+   </div>
+   <?php
+  }
+
  }
 }
 $var = new Publish_Scheduler;
